@@ -1,0 +1,6 @@
+#################################################
+# Conexión de datos
+#################################################
+
+namejndi = jdbc/CommandDS
+pathJasper = C:\\Configuracion\\
