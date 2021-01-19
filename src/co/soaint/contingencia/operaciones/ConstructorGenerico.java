@@ -1,8 +1,8 @@
 package co.soaint.contingencia.operaciones;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRExporter;
@@ -21,7 +21,7 @@ public class ConstructorGenerico {
 		Connection conexion = alias.getConnection();
 		ByteArrayOutputStream ba = new ByteArrayOutputStream();
 		try{
-			JasperReport reporte = (JasperReport) JRLoader.loadObject(jasperFile);
+			JasperReport reporte = (JasperReport) JRLoader.loadObject(new File(DataConfigProperties.getPropietat("pathJasper") + jasperFile));
 			
 			JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parameters, conexion);  
 

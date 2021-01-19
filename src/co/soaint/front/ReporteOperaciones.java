@@ -4,7 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -27,12 +30,42 @@ public class ReporteOperaciones extends HttpServlet{
         super();
         // TODO Auto-generated constructor stub
     }
+    
+    
+    public static void main (String [ ] args) {
+
+    	String tipoTramiteListService="9-10-12";
+    	
+    	List<String> tipoTramiteListJasper = new ArrayList<String>();
+
+    	StringTokenizer tokensTramite=new StringTokenizer(tipoTramiteListService, "-");
+    	
+    	while(tokensTramite.hasMoreTokens()){
+    		
+    		String token=tokensTramite.nextToken();
+    		tipoTramiteListJasper.add(token);
+        }
+    	
+    	
+    	for(String tramite:tipoTramiteListJasper) {
+    	 	System.out.println("Tramite en lista: "+tramite);
+    		
+    		
+    	}
+    	
+
+
+}
+    
+    
+    
 	
     /**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+    	try {
     	Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String formato = request.getParameter("formato");
@@ -48,13 +81,39 @@ public class ReporteOperaciones extends HttpServlet{
     	String numRadicado = request.getParameter("NoRadicado");
     	String fechaInicio = request.getParameter("FECHAINICIO");
     	String fechaFin = request.getParameter("FECHAFIN");
-    	String tipoTramite = request.getParameter("TIPOTRAMITE");
-    	String direccion = request.getParameter("DIRETERRITO");
+    	String tipoTramiteListService=request.getParameter("TIPOTRAMITE");
+      	String direccionListService = request.getParameter("DIRETERRITO");
     	String medioRecepcion = request.getParameter("MEDIORECEP");
     	String planta = request.getParameter("IDE_PLANTA");
     	
+    	//Procesar Lista para trámites
+    	
+    	List<String> tipoTramiteListJasper = new ArrayList<String>();
+    	StringTokenizer tokensTramite=new StringTokenizer(tipoTramiteListService, "-");
+    	
+    	while(tokensTramite.hasMoreTokens()){    		
+    		String token=tokensTramite.nextToken();
+    		System.out.println("Token Tramite ingresado: "+token);
+    		tipoTramiteListJasper.add(token);
+        }
+    	
+    	
+    	//Procesar Lista para direcciones
+    	
+    	List<String> direccionesListJasper = new ArrayList<String>();
+    	StringTokenizer tokensDirecciones=new StringTokenizer(direccionListService, "-");
+    	
+    	while(tokensDirecciones.hasMoreTokens()){    		
+    		String token2=tokensDirecciones.nextToken();
+    		System.out.println("Token Dirección ingresado: "+token2);
+    		direccionesListJasper.add(token2);
+        }
+    	
+    	System.out.println("# de radicado ingresado: "+numRadicado);
+    	System.out.println("formato ingresado: "+formato);
+    	
 
-    	ByteArrayOutputStream baos = getByteArrayOutputStream(numRadicado,fechaInicio,fechaFin,tipoTramite,direccion,medioRecepcion,planta,formato);
+    	ByteArrayOutputStream baos = getByteArrayOutputStream(numRadicado,fechaInicio,fechaFin,tipoTramiteListJasper,direccionesListJasper,medioRecepcion,planta,formato);
 
     	response.setContentLength(baos.size());
 
@@ -65,6 +124,13 @@ public class ReporteOperaciones extends HttpServlet{
     	baos.writeTo(sos);
 
     	sos.flush();
+    	} catch (Exception e) {
+    		System.out.println("ReporteOperaciones : "+e.toString());
+		}
+    	
+    	finally {
+    	  GeneradorRotulo.pasarGarbageCollector();
+    	}
 
     }
     
@@ -76,17 +142,17 @@ public class ReporteOperaciones extends HttpServlet{
 		doGet(request, response);
 	}
     
-    private ByteArrayOutputStream getByteArrayOutputStream(String numRadicado, String fechaInicio, String fechaFin, String tipoTramite, String direccion, String medioRecepcion, String planta, String formato) throws IOException {
+    private ByteArrayOutputStream getByteArrayOutputStream(String numRadicado, String fechaInicio, String fechaFin, List<String> tipoTramite, List<String> direccion, String medioRecepcion, String planta, String formato) throws IOException {
 
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+	    GeneradorRotulo ops = new GeneradorRotulo();
 	    try {
 	    	
 			byte[] archivo;
 			if(formato.equals("PDF")) {
-				archivo = GeneradorRotulo.obtenerReporteOperacionPDF(numRadicado,fechaInicio,fechaFin,tipoTramite,direccion,medioRecepcion, planta);
+				archivo = ops.obtenerReporteOperacionPDF(numRadicado,fechaInicio,fechaFin,tipoTramite,direccion,medioRecepcion, planta);
 			}else {
-				archivo = GeneradorRotulo.obtenerReporteOperacionXLS(numRadicado,fechaInicio,fechaFin,tipoTramite,direccion,medioRecepcion, planta);
+				archivo = ops.obtenerReporteOperacionXLS(numRadicado,fechaInicio,fechaFin,tipoTramite,direccion,medioRecepcion, planta);
 			}
 			
 			bos.write(archivo);

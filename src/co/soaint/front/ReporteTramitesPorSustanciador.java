@@ -4,7 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -33,6 +36,7 @@ public class ReporteTramitesPorSustanciador extends HttpServlet{
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+    	try {
     	Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String formato = request.getParameter("formato");
@@ -51,8 +55,33 @@ public class ReporteTramitesPorSustanciador extends HttpServlet{
     	String idPlanta = request.getParameter("IDE_PLANTA");
     	String estado = request.getParameter("ESTADO");
     	String tipoTramite = request.getParameter("TIPOTRAMITE");
+    	
+    	
+    	List<String> tipoTramiteListJasper = new ArrayList<String>();
+    	StringTokenizer tokensTramite=new StringTokenizer(tipoTramite, "-");
+    	
+    	while(tokensTramite.hasMoreTokens()){    		
+    		String token=tokensTramite.nextToken();
+    		System.out.println("Token Tramite ingresado: "+token);
+    		tipoTramiteListJasper.add(token);
+        }
+    	
+    	
+    	//Procesar Lista para direcciones
+    	
+    	List<String> direccionesListJasper = new ArrayList<String>();
+    	StringTokenizer tokensDirecciones=new StringTokenizer(dirTerritorial, "-");
+    	
+    	while(tokensDirecciones.hasMoreTokens()){    		
+    		String token2=tokensDirecciones.nextToken();
+    		System.out.println("Token Dirección ingresado: "+token2);
+    		direccionesListJasper.add(token2);
+        }
+    	
+    	
+    	
 
-    	ByteArrayOutputStream baos = getByteArrayOutputStream(dirTerritorial,fechaInicio,fechaFin,idPlanta,estado,tipoTramite,formato);
+    	ByteArrayOutputStream baos = getByteArrayOutputStream(direccionesListJasper,fechaInicio,fechaFin,idPlanta,estado,tipoTramiteListJasper,formato);
 
     	response.setContentLength(baos.size());
 
@@ -63,6 +92,13 @@ public class ReporteTramitesPorSustanciador extends HttpServlet{
     	baos.writeTo(sos);
 
     	sos.flush();
+    	} catch (Exception e) {
+    		System.out.println("ReporteTramitesPorSustanciador : "+e.toString());
+		}
+    	
+    	finally {
+    	  GeneradorRotulo.pasarGarbageCollector(); 
+    	}
 
     }
     
@@ -74,17 +110,17 @@ public class ReporteTramitesPorSustanciador extends HttpServlet{
 		doGet(request, response);
 	}
     
-    private ByteArrayOutputStream getByteArrayOutputStream(String dirTerritorial, String fechaInicio, String fechaFin, String idPlanta, String estado, String tipoTramite, String formato) throws IOException {
+    private ByteArrayOutputStream getByteArrayOutputStream(List<String> dirTerritorial, String fechaInicio, String fechaFin, String idPlanta, String estado, List<String> tipoTramite, String formato) throws IOException {
 
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+	    GeneradorRotulo ops = new GeneradorRotulo();
 	    try {
 	    	
 			byte[] archivo;
 			if(formato.equals("PDF")) {
-				archivo = GeneradorRotulo.obtenerReporteTramitesPorSustaciadorPDF(dirTerritorial,fechaInicio,fechaFin,idPlanta,estado,tipoTramite);
+				archivo = ops.obtenerReporteTramitesPorSustaciadorPDF(dirTerritorial,fechaInicio,fechaFin,idPlanta,estado,tipoTramite);
 			}else {
-				archivo = GeneradorRotulo.obtenerReporteTramitesPorSustaciadorXLS(dirTerritorial,fechaInicio,fechaFin,idPlanta,estado,tipoTramite);
+				archivo = ops.obtenerReporteTramitesPorSustaciadorXLS(dirTerritorial,fechaInicio,fechaFin,idPlanta,estado,tipoTramite);
 			}
 			
 			bos.write(archivo);

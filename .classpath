@@ -22,8 +22,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/DynamicJasper-3.1.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/groovy-all-2.0.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/gson-2.2.4.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/iText-2.1.7.js2.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jasperreports-5.2.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.ejb.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.resource.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.ws.rs.jar"/>
@@ -60,12 +58,8 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/batik-svggen.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/batik-util.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/batik-xml.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v8.0">
-		<attributes>
-			<attribute name="owner.project.facets" value="jst.web"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_261">
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jasperreports-6.0.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>

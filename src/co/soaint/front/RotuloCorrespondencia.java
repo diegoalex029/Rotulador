@@ -3,6 +3,10 @@ package co.soaint.front;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -32,16 +36,18 @@ public class RotuloCorrespondencia extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		try {			
+		
     	response.setContentType("application/pdf");
 
     	response.setHeader("Content-disposition","inline; filename=automatic_start.pdf" );
 
     	String numeroRadicado = request.getParameter("numero");
-    	String documento = "";
+    	String documento = "COR";
+    	String qrCode = getFullURL(request);
     	//900009
 
-    	ByteArrayOutputStream baos = getByteArrayOutputStream(numeroRadicado,documento );
+    	ByteArrayOutputStream baos = getByteArrayOutputStream(numeroRadicado,documento,qrCode);
 
     	response.setContentLength(baos.size());
 
@@ -52,6 +58,13 @@ public class RotuloCorrespondencia extends HttpServlet {
     	baos.writeTo(sos);
 
     	sos.flush();
+		} catch (Exception e) {
+			System.out.println("StickerPDF : "+e.toString());
+		}
+		
+		finally {
+			GeneradorRotulo.pasarGarbageCollector();
+		}
 
     }
 
@@ -63,12 +76,12 @@ public class RotuloCorrespondencia extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	private ByteArrayOutputStream getByteArrayOutputStream(String numeroRadicado, String documento ) throws IOException {
+	private ByteArrayOutputStream getByteArrayOutputStream(String numeroRadicado, String documento, String qrCode ) throws IOException {
 
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+	    GeneradorRotulo ops = new GeneradorRotulo();
 	    try {
-			byte[] archivo =  GeneradorRotulo.getDocumentoCompleto(numeroRadicado, documento);
+			byte[] archivo =  ops.getDocumentoCompleto(numeroRadicado, documento, qrCode);
 			bos.write(archivo);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -77,5 +90,19 @@ public class RotuloCorrespondencia extends HttpServlet {
 
 	    return bos;
 	}
+	
+	  /**
+	   * Obtener URL Donde estamos ubicados.
+	   * @param request
+	   * @return
+	   */
+	  private String getFullURL(HttpServletRequest request) { 
+	    StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString()); 
+	    String queryString = request.getQueryString(); 
+	    if (queryString == null) { 
+	      return requestURL.toString(); 
+	      } else { 
+	        return requestURL.append('?').append(queryString).toString(); } 
+	    }
 
 }

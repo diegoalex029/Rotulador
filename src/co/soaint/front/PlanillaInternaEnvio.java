@@ -72,7 +72,7 @@ public class PlanillaInternaEnvio extends HttpServlet {
         	format="pdf";
         }
         
-        String jasperFile=baseDir+reportName+".jasper";
+        String jasperFile=reportName+".jasper";
     	String fileNameOut=dateFormat.format(date)+"_"+reportName+"."+format;    	
     	
     	response.setContentType("application/"+format);
